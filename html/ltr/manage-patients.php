@@ -1,4 +1,19 @@
-<?php include 'config.php'; ?>
+<?php
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: login.php");
+    exit();
+}
+include 'config.php'; ?>
+<?php
+// Fetch data for edit if 'edit' is clicked
+if (isset($_GET['edit'])) {
+  $edit_id = $_GET['edit'];
+  $edit_result = mysqli_query($conn, "SELECT * FROM patients WHERE patient_id = $edit_id");
+  $edit_data = mysqli_fetch_assoc($edit_result);
+}
+
+?>
 
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
@@ -10,6 +25,10 @@
     table { margin-top: 20px; border-collapse: collapse; width: 100%; }
     th, td { border: 1px solid #aaa; padding: 8px; text-align: left; }
     .form-container { background: #f5f5f5; padding: 15px; width: fit-content; border-radius: 10px; }
+    #sidebarnav {
+    margin-top: 30px;
+}
+
   </style>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -89,29 +108,39 @@
         <!-- Form -->
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Add New Patient</h4>
+<h4 class="card-title"><?php echo isset($edit_data) ? 'Edit Patient' : 'Add New Patient'; ?></h4>  
             <form method="POST">
+              <input type="hidden" name="edit_id" value="<?php echo isset($edit_data) ? $edit_data['patient_id'] : ''; ?>">
+
               <div class="row">
                 <div class="col-md-6 mb-3">
-                  <input type="text" name="full_name" class="form-control" placeholder="Full Name" required>
+<input type="text" name="full_name" class="form-control" placeholder="Full Name" required
+value="<?php echo isset($edit_data) ? $edit_data['full_name'] : ''; ?>">
                 </div>
                 <div class="col-md-6 mb-3">
-                  <input type="text" name="phone" class="form-control" placeholder="Phone" required>
+<input type="text" name="phone" class="form-control" placeholder="Phone" required
+value="<?php echo isset($edit_data) ? $edit_data['phone'] : ''; ?>">
                 </div>
                 <div class="col-md-6 mb-3">
-                  <input type="email" name="email" class="form-control" placeholder="Email" required>
+<input type="email" name="email" class="form-control" placeholder="Email" required
+value="<?php echo isset($edit_data) ? $edit_data['email'] : ''; ?>">
                 </div>
                 <div class="col-md-6 mb-3">
-                  <input type="text" name="address" class="form-control" placeholder="Address" required>
+<input type="text" name="address" class="form-control" placeholder="Address" required
+value="<?php echo isset($edit_data) ? $edit_data['address'] : ''; ?>">
                 </div>
                 <div class="col-md-6 mb-3">
-                  <input type="number" name="city_id" class="form-control" placeholder="City ID" required>
+<input type="number" name="city_id" class="form-control" placeholder="City ID" required
+value="<?php echo isset($edit_data) ? $edit_data['city_id'] : ''; ?>">
                 </div>
                 <div class="col-md-6 mb-3">
-                  <input type="number" name="user_id" class="form-control" placeholder="User ID" required>
+<input type="number" name="user_id" class="form-control" placeholder="User ID" required
+value="<?php echo isset($edit_data) ? $edit_data['user_id'] : ''; ?>">
                 </div>
                 <div class="col-12">
-                  <button type="submit" name="add" class="btn btn-success">Add Patient</button>
+<button type="submit" name="<?php echo isset($edit_data) ? 'update' : 'add'; ?>" class="btn btn-<?php echo isset($edit_data) ? 'info' : 'success'; ?>">
+  <?php echo isset($edit_data) ? 'Update Patient' : 'Add Patient'; ?>
+</button>
                 </div>
               </div>
             </form>
@@ -133,12 +162,32 @@
           mysqli_query($conn, $query);
           echo "<script>window.location='manage-patients.php';</script>";
         }
+        if (isset($_POST['update'])) {
+  $id = $_POST['edit_id'];
+  $full_name = $_POST['full_name'];
+  $phone = $_POST['phone'];
+  $email = $_POST['email'];
+  $address = $_POST['address'];
+  $city_id = $_POST['city_id'];
+  $user_id = $_POST['user_id'];
+
+  $query = "UPDATE patients SET 
+    user_id='$user_id', full_name='$full_name', phone='$phone', 
+    email='$email', address='$address', city_id='$city_id' 
+    WHERE patient_id=$id";
+
+  mysqli_query($conn, $query);
+  echo "<script>window.location='manage-patients.php';</script>";
+}
+
 
         if (isset($_GET['delete'])) {
           $id = $_GET['delete'];
           mysqli_query($conn, "DELETE FROM patients WHERE patient_id = $id");
           echo "<script>window.location='manage-patients.php';</script>";
         }
+
+
         ?>
 
         <!-- Table -->
@@ -172,8 +221,14 @@
                             <td>{$row['address']}</td>
                             <td>{$row['city_id']}</td>
                             <td>
-                              <a href='manage-patients.php?delete={$row['patient_id']}' class='btn btn-danger btn-sm' onclick='return confirm(\"Delete this patient?\")'>Delete</a>
-                            </td>
+  <a href='manage-patients.php?edit={$row['patient_id']}' class='btn btn-sm btn-primary' title='Edit'>
+    <i class='mdi mdi-pencil'></i>
+  </a>
+  <a href='manage-patients.php?delete={$row['patient_id']}' class='btn btn-sm btn-danger' title='Delete' onclick='return confirm(\"Delete this patient?\")'>
+    <i class='mdi mdi-delete'></i>
+  </a>
+</td>
+
                           </tr>";
                   }
                   ?>
@@ -219,6 +274,7 @@
     <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
+     
     <script src="../../assets/libs/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap tether Core JavaScript -->
     <script src="../../assets/libs/popper.js/dist/umd/popper.min.js"></script>

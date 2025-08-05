@@ -1,4 +1,11 @@
-<?php include 'config.php'; ?>
+<?php
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: login.php");
+    exit();
+}
+include 'config.php'; ?>
+
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
 
@@ -9,6 +16,10 @@
         table { margin-top: 20px; border-collapse: collapse; width: 100%; }
         th, td { border: 1px solid #aaa; padding: 8px; text-align: left; }
         .form-container { background: #f5f5f5; padding: 15px; width: fit-content; border-radius: 10px; }
+        #sidebarnav {
+    margin-top: 30px;
+}
+
     </style>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -79,7 +90,7 @@
                                             <td>{$row['patient_id']}</td>
                                             <td>{$row['doctor_id']}</td>
                                             <td>{$row['appointment_date']}</td>
-                                            <td>{$row['appointment_time']}</td>
+                                            <td>{$row['booked_on']}</td>
                                             <td>{$row['status']}</td>
                                             <td>
                                                 <a href='appointments.php?delete={$row['appointment_id']}' class='btn btn-danger btn-sm' onclick='return confirm(\"Delete this appointment?\")'>Delete</a>

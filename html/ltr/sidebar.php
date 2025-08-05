@@ -5,10 +5,11 @@
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="index.html" aria-expanded="false">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="index.php" aria-expanded="false">
                                 <i class="mdi mdi-av-timer"></i>
                                 <span class="hide-menu">Dashboard</span>
                             </a>
+</li>
                        <!-- Manage Doctors -->
         <li class="sidebar-item">
           <a class="sidebar-link waves-effect waves-dark" href="manage-doctors.php" aria-expanded="false">
@@ -31,19 +32,20 @@
             <span class="hide-menu">Appointments</span>
           </a>
         </li>
-                       <!-- Logout -->
+       
         <li class="sidebar-item">
-          <a class="sidebar-link waves-effect waves-dark" href="logout.php" aria-expanded="false">
-            <i class="mdi mdi-logout"></i>
-            <span class="hide-menu">Logout</span>
-          </a>
-        </li>
-                        <li class="sidebar-item">
   <a class="sidebar-link waves-effect waves-dark" href="messages.php" aria-expanded="false">
     <i class="mdi mdi-message-text-outline"></i>
     <span class="hide-menu">Messages</span>
   </a>
 </li>
+<li class="sidebar-item">
+  <a class="sidebar-link waves-effect waves-dark" href="logout.php" aria-expanded="false">
+    <i class="mdi mdi-logout"></i>
+    <span class="hide-menu">Logout</span>
+  </a>
+</li>
+
 
                     </ul>
                 </nav>

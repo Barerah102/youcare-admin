@@ -1,28 +1,31 @@
+<?php
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: login.php");
+    exit();
+}
+include 'config.php';
+
+// Fetch total counts
+$total_patients = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM patients"))['count'];
+$total_doctors = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM doctors"))['count'];
+$upcoming_appointments = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM appointments WHERE appointment_date >= CURDATE()"))['count'];
+?>
+
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- Favicon icon -->
+    <meta name="description" content="YouCare Admin Panel">
+    <meta name="author" content="Queen">
     <link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicon.png">
-    <title>Nice admin Template - The Ultimate Multipurpose admin template</title>
-    <!-- Custom CSS -->
+    <title>YouCare Dashboard</title>
     <link href="../../assets/libs/chartist/dist/chartist.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
     <link href="../../dist/css/style.min.css" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-<![endif]-->
 </head>
-
 <body>
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
@@ -37,166 +40,10 @@
     <!-- Main wrapper - style you can find in pages.scss -->
     <!-- ============================================================== -->
     <div id="main-wrapper" data-navbarbg="skin6" data-theme="light" data-layout="vertical" data-sidebartype="full" data-boxed-layout="full">
-        <!-- ============================================================== -->
-        <!-- Topbar header - style you can find in pages.scss -->
-        <!-- ============================================================== -->
-        <header class="topbar" data-navbarbg="skin6">
-            <nav class="navbar top-navbar navbar-expand-md navbar-light">
-                <div class="navbar-header" data-logobg="skin5">
-                    <!-- This is for the sidebar toggle which is visible on mobile only -->
-                    <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)">
-                        <i class="ti-menu ti-close"></i>
-                    </a>
-                    <!-- ============================================================== -->
-                    <!-- Logo -->
-                    <!-- ============================================================== -->
-                    <div class="navbar-brand">
-                        <a href="index.html" class="logo">
-                            <!-- Logo icon -->
-                            <b class="logo-icon">
-                                <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
-                                <!-- Dark Logo icon -->
-                                <img src="../../assets/images/logo-icon.png" alt="homepage" class="dark-logo" />
-                                <!-- Light Logo icon -->
-                                <img src="../../assets/images/logo-light-icon.png" alt="homepage" class="light-logo" />
-                            </b>
-                            <!--End Logo icon -->
-                            <!-- Logo text -->
-                            <span class="logo-text">
-                                <!-- dark Logo text -->
-                                <img src="../../assets/images/logo-text.png" alt="homepage" class="dark-logo" />
-                                <!-- Light Logo text -->
-                                <img src="../../assets/images/logo-light-text.png" class="light-logo" alt="homepage" />
-                            </span>
-                        </a>
-                    </div>
-                    <!-- ============================================================== -->
-                    <!-- End Logo -->
-                    <!-- ============================================================== -->
-                    <!-- ============================================================== -->
-                    <!-- Toggle which is visible on mobile only -->
-                    <!-- ============================================================== -->
-                    <a class="topbartoggler d-block d-md-none waves-effect waves-light" href="javascript:void(0)" data-toggle="collapse" data-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <i class="ti-more"></i>
-                    </a>
-                </div>
-                <!-- ============================================================== -->
-                <!-- End Logo -->
-                <!-- ============================================================== -->
-                <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin6">
-                    <!-- ============================================================== -->
-                    <!-- toggle and nav items -->
-                    <!-- ============================================================== -->
-                    <ul class="navbar-nav float-left mr-auto">
-                        <!-- ============================================================== -->
-                        <!-- Search -->
-                        <!-- ============================================================== -->
-                        <li class="nav-item search-box">
-                            <a class="nav-link waves-effect waves-dark" href="javascript:void(0)">
-                                <div class="d-flex align-items-center">
-                                    <i class="mdi mdi-magnify font-20 mr-1"></i>
-                                    <div class="ml-1 d-none d-sm-block">
-                                        <span>Search</span>
-                                    </div>
-                                </div>
-                            </a>
-                            <form class="app-search position-absolute">
-                                <input type="text" class="form-control" placeholder="Search &amp; enter">
-                                <a class="srh-btn">
-                                    <i class="ti-close"></i>
-                                </a>
-                            </form>
-                        </li>
-                    </ul>
-                    <!-- ============================================================== -->
-                    <!-- Right side toggle and nav items -->
-                    <!-- ============================================================== -->
-                    <ul class="navbar-nav float-right">
-                        <!-- ============================================================== -->
-                        <!-- User profile and search -->
-                        <!-- ============================================================== -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="../../assets/images/users/1.jpg" alt="user" class="rounded-circle" width="31"></a>
-                            <div class="dropdown-menu dropdown-menu-right user-dd animated">
-                                <a class="dropdown-item" href="javascript:void(0)"><i class="ti-user m-r-5 m-l-5"></i> My Profile</a>
-                                <a class="dropdown-item" href="javascript:void(0)"><i class="ti-wallet m-r-5 m-l-5"></i> My Balance</a>
-                                <a class="dropdown-item" href="javascript:void(0)"><i class="ti-email m-r-5 m-l-5"></i> Inbox</a>
-                            </div>
-                        </li>
-                        <!-- ============================================================== -->
-                        <!-- User profile and search -->
-                        <!-- ============================================================== -->
-                    </ul>
-                </div>
-            </nav>
-        </header>
-        <!-- ============================================================== -->
-        <!-- End Topbar header -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <aside class="left-sidebar" data-sidebarbg="skin5">
-            <!-- Sidebar scroll-->
-            <div class="scroll-sidebar">
-                <!-- Sidebar navigation-->
-                <nav class="sidebar-nav">
-                    <ul id="sidebarnav">
-                        <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="index.html" aria-expanded="false">
-                                <i class="mdi mdi-av-timer"></i>
-                                <span class="hide-menu">Dashboard</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="pages-profile.html" aria-expanded="false">
-                                <i class="mdi mdi-account-network"></i>
-                                <span class="hide-menu">Profile</span>
-                            </a>
-                        </li>
-                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="form-basic.html" aria-expanded="false">
-                                <i class="mdi mdi-arrange-bring-forward"></i>
-                                <span class="hide-menu">Form Basic</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="table-basic.html" aria-expanded="false">
-                                <i class="mdi mdi-border-none"></i>
-                                <span class="hide-menu">Table</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="icon-material.html" aria-expanded="false">
-                                <i class="mdi mdi-face"></i>
-                                <span class="hide-menu">Icon</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="starter-kit.html" aria-expanded="false">
-                                <i class="mdi mdi-file"></i>
-                                <span class="hide-menu">Blank</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="error-404.html" aria-expanded="false">
-                                <i class="mdi mdi-alert-outline"></i>
-                                <span class="hide-menu">404</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <!-- End Sidebar navigation -->
-            </div>
-            <!-- End Sidebar scroll-->
-        </aside>
-        <!-- ============================================================== -->
-        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Page wrapper  -->
-        <!-- ============================================================== -->
+ <?php include "topbar.php" ?>
+
+ <?php include "sidebar.php" ?>
+        
         <div class="page-wrapper">
             <!-- ============================================================== -->
             <!-- Bread crumb and right sidebar toggle -->
@@ -220,55 +67,74 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
+            
             <!-- Container fluid  -->
             <!-- ============================================================== -->
-            <div class="container-fluid">
-                <!-- ============================================================== -->
-                <!-- Email campaign chart -->
-                <!-- ============================================================== -->
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">Sales Ratio</h4>
-                                <div class="sales ct-charts mt-3"></div>
-                            </div>
-                        </div>
+           <div class="container-fluid">
+    <!-- Appointment Overview Chart -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Appointments Overview</h4>
+                    <div class="ct-chart mt-3" id="appointmentsChart"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Summary Right Column -->
+        <div class="col-md-4">
+            <!-- Total Appointments Card -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title m-b-5">Total Appointments</h5>
+                    <h3 class="font-light">
+                        <?php echo $upcoming_appointments; ?>
+                    </h3>
+                    <div class="m-t-20 text-center">
+                        <div id="appointmentsSummaryChart"></div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title m-b-5">Referral Earnings</h5>
-                                <h3 class="font-light">$769.08</h3>
-                                <div class="m-t-20 text-center">
-                                    <div id="earnings"></div>
-                                </div>
+                </div>
+            </div>
+
+            <!-- Total Users Card -->
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title m-b-0">Users</h4>
+                    <h2 class="font-light">
+                        <?php echo $total_patients + $total_doctors; ?>
+                        <span class="font-16 text-success font-medium">Live</span>
+                    </h2>
+                    <div class="m-t-30">
+                        <div class="row text-center">
+                            <div class="col-6 border-right">
+                                <h4 class="m-b-0"><?php echo round(($total_patients / ($total_patients + $total_doctors)) * 100); ?>%</h4>
+                                <span class="font-14 text-muted">Patients</span>
                             </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title m-b-0">Users</h4>
-                                <h2 class="font-light">35,658 <span class="font-16 text-success font-medium">+23%</span></h2>
-                                <div class="m-t-30">
-                                    <div class="row text-center">
-                                        <div class="col-6 border-right">
-                                            <h4 class="m-b-0">58%</h4>
-                                            <span class="font-14 text-muted">New Users</span>
-                                        </div>
-                                        <div class="col-6">
-                                            <h4 class="m-b-0">42%</h4>
-                                            <span class="font-14 text-muted">Repeat Users</span>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="col-6">
+                                <h4 class="m-b-0"><?php echo round(($total_doctors / ($total_patients + $total_doctors)) * 100); ?>%</h4>
+                                <span class="font-14 text-muted">Doctors</span>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chartist JS -->
+<script>
+    new Chartist.Bar('#appointmentsChart', {
+        labels: ['Patients', 'Doctors', 'Appointments'],
+        series: [
+            [<?php echo $total_patients; ?>, <?php echo $total_doctors; ?>, <?php echo $upcoming_appointments; ?>]
+        ]
+    }, {
+        distributeSeries: true
+    });
+</script>
+
                 <!-- ============================================================== -->
                 <!-- Email campaign chart -->
                 <!-- ============================================================== -->
@@ -280,63 +146,56 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title">Latest Sales</h4>
+                            <h4 class="card-title">Recent Appointments</h4>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th class="border-top-0">NAME</th>
-                                            <th class="border-top-0">STATUS</th>
-                                            <th class="border-top-0">DATE</th>
-                                            <th class="border-top-0">PRICE</th>
+                                            <th class="border-top-0">Patient</th>
+                                            <th class="border-top-0">Doctor</th>
+                                            <th class="border-top-0">Date</th>
+                                            <th class="border-top-0">Status</th>
+
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            
-                                            <td class="txt-oflo">Elite admin</td>
-                                            <td><span class="label label-success label-rounded">SALE</span> </td>
-                                            <td class="txt-oflo">April 18, 2017</td>
-                                            <td><span class="font-medium">$24</span></td>
-                                        </tr>
-                                        <tr>
-                                            
-                                            <td class="txt-oflo">Real Homes WP Theme</td>
-                                            <td><span class="label label-info label-rounded">EXTENDED</span></td>
-                                            <td class="txt-oflo">April 19, 2017</td>
-                                            <td><span class="font-medium">$1250</span></td>
-                                        </tr>
-                                        <tr>
-                                            
-                                            <td class="txt-oflo">Ample Admin</td>
-                                            <td><span class="label label-purple label-rounded">Tax</span></td>
-                                            <td class="txt-oflo">April 19, 2017</td>
-                                            <td><span class="font-medium">$1250</span></td>
-                                        </tr>
-                                        <tr>
-                                            
-                                            <td class="txt-oflo">Medical Pro WP Theme</td>
-                                            <td><span class="label label-success label-rounded">Sale</span></td>
-                                            <td class="txt-oflo">April 20, 2017</td>
-                                            <td><span class="font-medium">-$24</span></td>
-                                        </tr>
-                                        <tr>
-                                            
-                                            <td class="txt-oflo">Hosting press html</td>
-                                            <td><span class="label label-success label-rounded">SALE</span></td>
-                                            <td class="txt-oflo">April 21, 2017</td>
-                                            <td><span class="font-medium">$24</span></td>
-                                        </tr>
-                                        <tr>
-                                            
-                                            <td class="txt-oflo">Digital Agency PSD</td>
-                                            <td><span class="label label-danger label-rounded">Tax</span> </td>
-                                            <td class="txt-oflo">April 23, 2017</td>
-                                            <td><span class="font-medium">-$14</span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                    <?php
+$query = "SELECT 
+             a.appointment_date, 
+             a.status, 
+             p.full_name AS patient, 
+             d.full_name AS doctor
+          FROM appointments a
+          JOIN patients p ON a.patient_id = p.patient_id
+          JOIN doctors d ON a.doctor_id = d.doctor_id
+          ORDER BY a.appointment_date DESC
+          LIMIT 6";
+
+$result = mysqli_query($conn, $query);
+
+if (mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $status = htmlspecialchars($row['status']);
+        $label = 'label-info';
+
+        if ($status === 'Confirmed') $label = 'label-success';
+        elseif ($status === 'Cancelled') $label = 'label-danger';
+        elseif ($status === 'Pending') $label = 'label-warning';
+
+        echo "<tr>";
+        echo "<td class='txt-oflo'>" . htmlspecialchars($row['patient']) . "</td>";
+        echo "<td class='txt-oflo'>" . htmlspecialchars($row['doctor']) . "</td>";
+        echo "<td class='txt-oflo'>" . date('F j, Y', strtotime($row['appointment_date'])) . "</td>";
+        echo "<td><span class='label label-rounded $label'>$status</span></td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='4' class='text-center'>No appointments found.</td></tr>";
+}
+?>
+     </tbody>
+        </table>
+
                             </div>
                         </div>
                     </div>
@@ -347,175 +206,108 @@
                 <!-- ============================================================== -->
                 <!-- Recent comment and chats -->
                 <!-- ============================================================== -->
-                <div class="row">
-                    <!-- column -->
-                    <div class="col-lg-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">Recent Comments</h4>
-                            </div>
-                            <div class="comment-widgets" style="height:430px;">
-                                <!-- Comment Row -->
-                                <div class="d-flex flex-row comment-row m-t-0">
-                                    <div class="p-2">
-                                        <img src="../../assets/images/users/1.jpg" alt="user" width="50" class="rounded-circle">
-                                    </div>
-                                    <div class="comment-text w-100">
-                                        <h6 class="font-medium">James Anderson</h6>
-                                        <span class="m-b-15 d-block">Lorem Ipsum is simply dummy text of the printing and type setting industry. </span>
-                                        <div class="comment-footer">
-                                            <span class="text-muted float-right">April 14, 2016</span>
-                                            <span class="label label-rounded label-primary">Pending</span>
-                                            <span class="action-icons">
-                                                <a href="javascript:void(0)">
-                                                    <i class="ti-pencil-alt"></i>
-                                                </a>
-                                                <a href="javascript:void(0)">
-                                                    <i class="ti-check"></i>
-                                                </a>
-                                                <a href="javascript:void(0)">
-                                                    <i class="ti-heart"></i>
-                                                </a>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Comment Row -->
-                                <div class="d-flex flex-row comment-row">
-                                    <div class="p-2">
-                                        <img src="../../assets/images/users/4.jpg" alt="user" width="50" class="rounded-circle">
-                                    </div>
-                                    <div class="comment-text active w-100">
-                                        <h6 class="font-medium">Michael Jorden</h6>
-                                        <span class="m-b-15 d-block">Lorem Ipsum is simply dummy text of the printing and type setting industry. </span>
-                                        <div class="comment-footer ">
-                                            <span class="text-muted float-right">April 14, 2016</span>
-                                            <span class="label label-success label-rounded">Approved</span>
-                                            <span class="action-icons active">
-                                                <a href="javascript:void(0)">
-                                                    <i class="ti-pencil-alt"></i>
-                                                </a>
-                                                <a href="javascript:void(0)">
-                                                    <i class="icon-close"></i>
-                                                </a>
-                                                <a href="javascript:void(0)">
-                                                    <i class="ti-heart text-danger"></i>
-                                                </a>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Comment Row -->
-                                <div class="d-flex flex-row comment-row">
-                                    <div class="p-2">
-                                        <img src="../../assets/images/users/5.jpg" alt="user" width="50" class="rounded-circle">
-                                    </div>
-                                    <div class="comment-text w-100">
-                                        <h6 class="font-medium">Johnathan Doeting</h6>
-                                        <span class="m-b-15 d-block">Lorem Ipsum is simply dummy text of the printing and type setting industry. </span>
-                                        <div class="comment-footer">
-                                            <span class="text-muted float-right">April 14, 2016</span>
-                                            <span class="label label-rounded label-danger">Rejected</span>
-                                            <span class="action-icons">
-                                                <a href="javascript:void(0)">
-                                                    <i class="ti-pencil-alt"></i>
-                                                </a>
-                                                <a href="javascript:void(0)">
-                                                    <i class="ti-check"></i>
-                                                </a>
-                                                <a href="javascript:void(0)">
-                                                    <i class="ti-heart"></i>
-                                                </a>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Comment Row -->
-                                <div class="d-flex flex-row comment-row m-t-0">
-                                    <div class="p-2">
-                                        <img src="../../assets/images/users/2.jpg" alt="user" width="50" class="rounded-circle">
-                                    </div>
-                                    <div class="comment-text w-100">
-                                        <h6 class="font-medium">Steve Jobs</h6>
-                                        <span class="m-b-15 d-block">Lorem Ipsum is simply dummy text of the printing and type setting industry. </span>
-                                        <div class="comment-footer">
-                                            <span class="text-muted float-right">April 14, 2016</span>
-                                            <span class="label label-rounded label-primary">Pending</span>
-                                            <span class="action-icons">
-                                                <a href="javascript:void(0)">
-                                                    <i class="ti-pencil-alt"></i>
-                                                </a>
-                                                <a href="javascript:void(0)">
-                                                    <i class="ti-check"></i>
-                                                </a>
-                                                <a href="javascript:void(0)">
-                                                    <i class="ti-heart"></i>
-                                                </a>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- column -->
-                    <div class="col-lg-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">Temp Guide</h4>
-                                <div class="d-flex align-items-center flex-row m-t-30">
-                                    <div class="display-5 text-info"><i class="wi wi-day-showers"></i> <span>73<sup>°</sup></span></div>
-                                    <div class="m-l-10">
-                                        <h3 class="m-b-0">Saturday</h3><small>Ahmedabad, India</small>
-                                    </div>
-                                </div>
-                                <table class="table no-border mini-table m-t-20">
-                                    <tbody>
-                                        <tr>
-                                            <td class="text-muted">Wind</td>
-                                            <td class="font-medium">ESE 17 mph</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted">Humidity</td>
-                                            <td class="font-medium">83%</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted">Pressure</td>
-                                            <td class="font-medium">28.56 in</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted">Cloud Cover</td>
-                                            <td class="font-medium">78%</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <ul class="row list-style-none text-center m-t-30">
-                                    <li class="col-3">
-                                        <h4 class="text-info"><i class="wi wi-day-sunny"></i></h4>
-                                        <span class="d-block text-muted">09:30</span>
-                                        <h3 class="m-t-5">70<sup>°</sup></h3>
-                                    </li>
-                                    <li class="col-3">
-                                        <h4 class="text-info"><i class="wi wi-day-cloudy"></i></h4>
-                                        <span class="d-block text-muted">11:30</span>
-                                        <h3 class="m-t-5">72<sup>°</sup></h3>
-                                    </li>
-                                    <li class="col-3">
-                                        <h4 class="text-info"><i class="wi wi-day-hail"></i></h4>
-                                        <span class="d-block text-muted">13:30</span>
-                                        <h3 class="m-t-5">75<sup>°</sup></h3>
-                                    </li>
-                                    <li class="col-3">
-                                        <h4 class="text-info"><i class="wi wi-day-sprinkle"></i></h4>
-                                        <span class="d-block text-muted">15:30</span>
-                                        <h3 class="m-t-5">76<sup>°</sup></h3>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+     <div class="row">
+    <!-- Left Column: Recent Messages -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">📬 Recent Messages</h4>
+            </div>
+            <div class="comment-widgets" style="height:430px;">
+                <?php
+                $query = "SELECT name, subject, message, created_at FROM messages ORDER BY created_at DESC LIMIT 4";
+                $result = mysqli_query($conn, $query);
 
-                    </div>
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $name = htmlspecialchars($row['name']);
+                        $initial = strtoupper(substr($name, 0, 1));
+                        $subject = htmlspecialchars($row['subject']);
+                        $preview = htmlspecialchars(substr($row['message'], 0, 80)) . '...';
+                        $date = date('F j, Y', strtotime($row['created_at']));
+                        echo '
+                        <div class="d-flex flex-row comment-row m-t-0">
+                            <div class="p-2">
+    <div class="rounded-circle bg-info text-white text-center" 
+         style="width: 50px; height: 50px; line-height: 50px; font-size: 20px;">
+    ' . $initial . '
+    </div>
+</div>
+
+
+
+                            <div class="comment-text w-100">
+                                <h6 class="font-medium">' . $name . '</h6>
+                                <strong>' . $subject . '</strong>
+                                <span class="m-b-15 d-block">' . $preview . '</span>
+                                <div class="comment-footer">
+                                    <span class="text-muted float-right">' . $date . '</span>
+                                    <span class="label label-rounded label-info">New</span>
+                                    <span class="action-icons">
+                                        <a href="messages.php">
+                                            <i class="ti-arrow-right"></i>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>';
+                    }
+                } else {
+                    echo '<div class="text-center p-3 text-muted">No messages yet.</div>';
+                }
+                ?>
+            </div>
+            <div class="text-center" style="margin-bottom: 25px;">
+    <a href="messages.php" class="btn btn-sm btn-outline-info">View All Messages</a>
+</div>
+
+        </div>
+    </div>
+
+    <!-- Right Column: Monthly Overview -->
+    <div class="col-lg-6">
+    <div class="card">
+        <div class="card-body p-0 d-flex flex-column" style="height: 565px;">
+            
+            <!-- Image covering upper part -->
+<div style="height: 230px; overflow: hidden;">
+    <img src="../../month.jpg" alt="Overview Image" style="width: 100%; height: 100%; object-fit: cover;">
+</div>
+
+<!-- Remaining content -->
+<div class="p-4 d-flex flex-column justify-content-between flex-grow-1">
+    <h4 class="card-title mb-3 text-center" style="margin-top: 10px;">📊 Monthly Overview</h4>
+                
+                <?php
+                // Appointments this month
+                $appointments = mysqli_query($conn, "SELECT COUNT(*) AS total FROM appointments WHERE MONTH(appointment_date) = MONTH(CURDATE()) AND YEAR(appointment_date) = YEAR(CURDATE())");
+                $appointments_count = mysqli_fetch_assoc($appointments)['total'];
+
+                // New Patients this month
+                $patients = mysqli_query($conn, "SELECT COUNT(*) AS total FROM patients WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())");
+                $patients_count = mysqli_fetch_assoc($patients)['total'];
+
+                // Messages this month
+                $messages = mysqli_query($conn, "SELECT COUNT(*) AS total FROM messages WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())");
+                $messages_count = mysqli_fetch_assoc($messages)['total'];
+                ?>
+
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item">🩺 Appointments Booked: <b><?= $appointments_count ?></b></li>
+                    <li class="list-group-item">👥 New Users: <b><?= $patients_count ?></b></li>
+                    <li class="list-group-item">📩 Messages Received: <b><?= $messages_count ?></b></li>
+                </ul>
+
+                <div class="text-center">
+                    <a href="report.php" class="btn btn-sm btn-outline-info">View Full Report</a>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
                 <!-- ============================================================== -->
                 <!-- Recent comment and chats -->
                 <!-- ============================================================== -->

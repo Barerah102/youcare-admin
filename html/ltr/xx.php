@@ -92,3 +92,80 @@
 
 </body>
 </html>
+
+
+<div id="main-wrapper" data-navbarbg="skin6" data-theme="light" data-layout="vertical" data-sidebartype="full" data-boxed-layout="full">
+
+    <!-- Topbar -->
+    <?php include 'topbar.php'; ?>
+
+    <!-- Sidebar -->
+    <?php include 'sidebar.php'; ?>
+
+    <!-- Page Content -->
+    <div class="page-wrapper">
+        <div class="page-breadcrumb">
+            <div class="row">
+                <div class="col-5 align-self-center">
+                    <h4 class="page-title">Patient Messages</h4>
+                </div>
+                <div class="col-7 align-self-center">
+                    <div class="d-flex align-items-center justify-content-end">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Messages</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Container Fluid -->
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Messages from Patients</h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Subject</th>
+                                    <th>Message</th>
+                                    <th>Received On</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $result = mysqli_query($conn, "SELECT * FROM messages ORDER BY message_id DESC");
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    echo "<tr>
+                                            <td>{$row['message_id']}</td>
+                                            <td>{$row['full_name']}</td>
+                                            <td>{$row['email']}</td>
+                                            <td>{$row['subject']}</td>
+                                            <td>{$row['message']}</td>
+                                            <td>{$row['created_at']}</td>
+                                          </tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Patient Messages - YouCare Admin</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicon.png">
+    <link href="../../dist/css/style.min.css" rel="stylesheet">
