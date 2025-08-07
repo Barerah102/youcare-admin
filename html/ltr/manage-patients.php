@@ -157,6 +157,43 @@ value="<?php echo isset($edit_data) ? $edit_data['user_id'] : ''; ?>">
           $city_id = $_POST['city_id'];
           $user_id = $_POST['user_id'];
 
+          // Full Name: only letters and spaces
+if (!preg_match("/^[A-Za-z\s]{2,50}$/", $full_name)) {
+    echo "<script>alert('Full Name should contain only letters and spaces (2–50 characters).'); window.history.back();</script>";
+    exit;
+}
+
+// Phone: digits only, 10–15 digits
+if (!preg_match("/^\d{10,15}$/", $phone)) {
+    echo "<script>alert('Phone number must be 10 to 15 digits.'); window.history.back();</script>";
+    exit;
+}
+
+// Email: valid format
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo "<script>alert('Invalid email format.'); window.history.back();</script>";
+    exit;
+}
+
+// Check for duplicate phone or email
+$check = mysqli_query($conn, "SELECT * FROM patients WHERE email='$email' OR phone='$phone'");
+if (mysqli_num_rows($check) > 0) {
+    echo "<script>alert('Email or Phone already exists.'); window.history.back();</script>";
+    exit;
+}
+
+// Address: min 5 characters, max 100
+if (strlen($address) < 5 || strlen($address) > 100) {
+    echo "<script>alert('Address should be 5 to 100 characters.'); window.history.back();</script>";
+    exit;
+}
+
+// City ID and User ID: must be positive integers
+if ($city_id <= 0 || $user_id <= 0) {
+    echo "<script>alert('Invalid City ID or User ID.'); window.history.back();</script>";
+    exit;
+}
+
           $query = "INSERT INTO patients (user_id, full_name, phone, email, address, city_id)
                     VALUES ('$user_id', '$full_name', '$phone', '$email', '$address', '$city_id')";
           mysqli_query($conn, $query);
@@ -170,6 +207,52 @@ value="<?php echo isset($edit_data) ? $edit_data['user_id'] : ''; ?>">
   $address = $_POST['address'];
   $city_id = $_POST['city_id'];
   $user_id = $_POST['user_id'];
+
+  // Trim and sanitize inputs
+$full_name = trim($_POST['full_name']);
+$phone = trim($_POST['phone']);
+$email = trim($_POST['email']);
+$address = trim($_POST['address']);
+$city_id = intval($_POST['city_id']);
+$user_id = intval($_POST['user_id']);
+
+// Full Name: only letters and spaces
+if (!preg_match("/^[A-Za-z\s]{2,50}$/", $full_name)) {
+    echo "<script>alert('Full Name should contain only letters and spaces (2–50 characters).'); window.history.back();</script>";
+    exit;
+}
+
+// Phone: digits only, 10–15 digits
+if (!preg_match("/^\d{10,15}$/", $phone)) {
+    echo "<script>alert('Phone number must be 10 to 15 digits.'); window.history.back();</script>";
+    exit;
+}
+
+// Email: valid format
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo "<script>alert('Invalid email format.'); window.history.back();</script>";
+    exit;
+}
+
+// Check for duplicate phone or email
+$check = mysqli_query($conn, "SELECT * FROM patients WHERE (email='$email' OR phone='$phone') AND patient_id != $id");
+if (mysqli_num_rows($check) > 0) {
+    echo "<script>alert('Email or Phone already exists.'); window.history.back();</script>";
+    exit;
+}
+
+// Address: min 5 characters, max 100
+if (strlen($address) < 5 || strlen($address) > 100) {
+    echo "<script>alert('Address should be 5 to 100 characters.'); window.history.back();</script>";
+    exit;
+}
+
+// City ID and User ID: must be positive integers
+if ($city_id <= 0 || $user_id <= 0) {
+    echo "<script>alert('Invalid City ID or User ID.'); window.history.back();</script>";
+    exit;
+}
+
 
   $query = "UPDATE patients SET 
     user_id='$user_id', full_name='$full_name', phone='$phone', 

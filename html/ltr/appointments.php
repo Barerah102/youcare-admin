@@ -5,7 +5,8 @@ if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
     exit();
 }
-include 'config.php'; ?>
+include 'config.php'; 
+?>
 
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
@@ -98,7 +99,6 @@ include 'config.php'; ?>
     <input type='hidden' name='appointment_id' value='{$row['appointment_id']}'>
     <select name='status' onchange='this.form.submit()'>
         <option value='Pending' " . ($row['status'] == 'Pending' ? 'selected' : '') . ">Pending</option>
-        <option value='Confirmed' " . ($row['status'] == 'Confirmed' ? 'selected' : '') . ">Confirmed</option>
         <option value='Cancelled' " . ($row['status'] == 'Cancelled' ? 'selected' : '') . ">Cancelled</option>
         <option value='Completed' " . ($row['status'] == 'Completed' ? 'selected' : '') . ">Completed</option>
     </select>

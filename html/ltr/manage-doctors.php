@@ -174,6 +174,58 @@ include 'config.php'; ?>
     $city_id = $_POST['city_id'];
     $profile_details = $_POST['profile_details'];
 
+    // Trim and sanitize inputs
+$full_name = trim($_POST['full_name']);
+$specialization = trim($_POST['specialization']);
+$phone = trim($_POST['phone']);
+$email = trim($_POST['email']);
+$address = trim($_POST['address']);
+$city_id = intval($_POST['city_id']);
+$profile_details = trim($_POST['profile_details']);
+
+// Validate full name (only letters and spaces, 2–50 characters)
+if (!preg_match("/^[A-Za-z\s]{2,50}$/", $full_name)) {
+    echo "<script>alert('Full Name should contain only letters and spaces (2–50 characters).'); window.history.back();</script>";
+    exit;
+}
+
+// Validate specialization (letters and spaces, 2–50 chars)
+if (!preg_match("/^[A-Za-z\s]{2,50}$/", $specialization)) {
+    echo "<script>alert('Specialization should contain only letters and spaces (2–50 characters).'); window.history.back();</script>";
+    exit;
+}
+
+// Validate phone (digits only, 10–15 digits)
+if (!preg_match("/^\d{10,15}$/", $phone)) {
+    echo "<script>alert('Phone number must be 10 to 15 digits.'); window.history.back();</script>";
+    exit;
+}
+
+// Validate email
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo "<script>alert('Invalid email format.'); window.history.back();</script>";
+    exit;
+}
+
+// Validate address (optional – just not empty here)
+if (strlen($address) < 5 || strlen($address) > 100) {
+    echo "<script>alert('Address should be 5 to 100 characters.'); window.history.back();</script>";
+    exit;
+}
+
+// Validate city_id (positive number)
+if ($city_id <= 0) {
+    echo "<script>alert('Invalid city selected.'); window.history.back();</script>";
+    exit;
+}
+// === ✅ DUPLICATE CHECK (after validations) ===
+    $check = mysqli_query($conn, "SELECT * FROM doctors WHERE email='$email' OR phone='$phone'");
+    if (mysqli_num_rows($check) > 0) {
+        echo "<script>alert('Email or Phone already exists!'); window.history.back();</script>";
+        exit;
+    }
+
+
     $query = "INSERT INTO doctors (full_name, specialization, phone, email, address, city_id, profile_details)
               VALUES ('$full_name', '$specialization', '$phone', '$email', '$address', '$city_id', '$profile_details')";
 
@@ -190,6 +242,44 @@ if (isset($_POST['update'])) {
   $address = $_POST['address'];
   $city_id = $_POST['city_id'];
   $profile_details = $_POST['profile_details'];
+
+  // === VALIDATIONS ===
+
+    // Full Name: only letters and spaces, 2–50 characters
+    if (!preg_match("/^[A-Za-z\s]{2,50}$/", $full_name)) {
+        echo "<script>alert('Full Name should contain only letters and spaces (2–50 characters).'); window.history.back();</script>";
+        exit;
+    }
+
+    // Specialization: only letters and spaces
+    if (!preg_match("/^[A-Za-z\s]{2,50}$/", $specialization)) {
+        echo "<script>alert('Specialization should contain only letters and spaces (2–50 characters).'); window.history.back();</script>";
+        exit;
+    }
+
+    // Phone: 10–15 digits only
+    if (!preg_match("/^\d{10,15}$/", $phone)) {
+        echo "<script>alert('Phone number must be 10 to 15 digits.'); window.history.back();</script>";
+        exit;
+    }
+
+    // Email: valid format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo "<script>alert('Invalid email format.'); window.history.back();</script>";
+        exit;
+    }
+
+    // Address: between 5 and 100 characters
+    if (strlen($address) < 5 || strlen($address) > 100) {
+        echo "<script>alert('Address should be 5 to 100 characters.'); window.history.back();</script>";
+        exit;
+    }
+
+    // City ID: must be a valid positive number
+    if ($city_id <= 0) {
+        echo "<script>alert('Invalid city selected.'); window.history.back();</script>";
+        exit;
+    }
 
   $query = "UPDATE doctors SET 
     full_name='$full_name', specialization='$specialization', phone='$phone', email='$email',

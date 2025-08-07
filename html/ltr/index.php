@@ -6,6 +6,7 @@ if (!isset($_SESSION['admin_id'])) {
 }
 include 'config.php';
 
+
 // Fetch total counts
 $total_patients = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM patients"))['count'];
 $total_doctors = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM doctors"))['count'];
@@ -74,54 +75,53 @@ $upcoming_appointments = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*)
            <div class="container-fluid">
     <!-- Appointment Overview Chart -->
     <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Appointments Overview</h4>
-                    <div class="ct-chart mt-3" id="appointmentsChart"></div>
+    <!-- Left Column with Image -->
+<div class="col-md-4 d-flex flex-column justify-content-between" style="height: 100%;">
+        <div class="card">
+            <div class="card-body text-center">
+                <img src="../../admin.jpg" alt="Appointments Overview" class="img-fluid mt-3" >
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column - Stats Summary -->
+    <div class="col-md-4">
+        <!-- Total Appointments Card -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title m-b-5">Total Appointments</h5>
+                <h3 class="font-light">
+                    <?php echo $upcoming_appointments; ?>
+                </h3>
+                <div class="m-t-20 text-center">
+                    <div id="appointmentsSummaryChart"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Stats Summary Right Column -->
-        <div class="col-md-4">
-            <!-- Total Appointments Card -->
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title m-b-5">Total Appointments</h5>
-                    <h3 class="font-light">
-                        <?php echo $upcoming_appointments; ?>
-                    </h3>
-                    <div class="m-t-20 text-center">
-                        <div id="appointmentsSummaryChart"></div>
-                    </div>
+        <!-- Total Users Card -->
+      <div class="card">
+    <div class="card-body">
+        <h4 class="card-title m-b-0">Users</h4>
+        <h2 class="font-light">
+            <?php echo $total_patients + $total_doctors; ?>
+        </h2>
+        <div class="m-t-30">
+            <div class="row text-center">
+                <div class="col-6 border-right">
+                    <h4 class="m-b-0"><?php echo $total_patients; ?></h4>
+                    <span class="font-14 text-muted">Patients</span>
                 </div>
-            </div>
-
-            <!-- Total Users Card -->
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title m-b-0">Users</h4>
-                    <h2 class="font-light">
-                        <?php echo $total_patients + $total_doctors; ?>
-                        <span class="font-16 text-success font-medium">Live</span>
-                    </h2>
-                    <div class="m-t-30">
-                        <div class="row text-center">
-                            <div class="col-6 border-right">
-                                <h4 class="m-b-0"><?php echo round(($total_patients / ($total_patients + $total_doctors)) * 100); ?>%</h4>
-                                <span class="font-14 text-muted">Patients</span>
-                            </div>
-                            <div class="col-6">
-                                <h4 class="m-b-0"><?php echo round(($total_doctors / ($total_patients + $total_doctors)) * 100); ?>%</h4>
-                                <span class="font-14 text-muted">Doctors</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-6">
+                    <h4 class="m-b-0"><?php echo $total_doctors; ?></h4>
+                    <span class="font-14 text-muted">Doctors</span>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+    </div> <!-- End Right Column -->
 </div>
 
 <!-- Chartist JS -->
