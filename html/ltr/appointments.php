@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 if (!isset($_SESSION['admin_id'])) {
@@ -89,14 +90,35 @@ include 'config.php'; ?>
                                             <td>{$row['appointment_id']}</td>
                                             <td>{$row['patient_id']}</td>
                                             <td>{$row['doctor_id']}</td>
-                                            <td>{$row['appointment_date']}</td>
+                                            <td>{$row['appointment_datetime']}</td>
                                             <td>{$row['booked_on']}</td>
-                                            <td>{$row['status']}</td>
+                                            <td>{$row['status']}
+                                            
+   <form method='post' action='appointments.php'>
+    <input type='hidden' name='appointment_id' value='{$row['appointment_id']}'>
+    <select name='status' onchange='this.form.submit()'>
+        <option value='Pending' " . ($row['status'] == 'Pending' ? 'selected' : '') . ">Pending</option>
+        <option value='Confirmed' " . ($row['status'] == 'Confirmed' ? 'selected' : '') . ">Confirmed</option>
+        <option value='Cancelled' " . ($row['status'] == 'Cancelled' ? 'selected' : '') . ">Cancelled</option>
+        <option value='Completed' " . ($row['status'] == 'Completed' ? 'selected' : '') . ">Completed</option>
+    </select>
+</form>
+
+
+
+                                            </td>
                                             <td>
                                                 <a href='appointments.php?delete={$row['appointment_id']}' class='btn btn-danger btn-sm' onclick='return confirm(\"Delete this appointment?\")'>Delete</a>
                                             </td>
                                         </tr>";
                                     }
+                                    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['status'])) {
+    $id = $_POST['appointment_id'];
+    $status = mysqli_real_escape_string($conn, $_POST['status']);
+    mysqli_query($conn, "UPDATE appointments SET status='$status' WHERE appointment_id=$id");
+    echo "<script>window.location='appointments.php';</script>";
+}
+
                                     ?>
                                 </tbody>
                             </table>

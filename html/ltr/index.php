@@ -9,7 +9,7 @@ include 'config.php';
 // Fetch total counts
 $total_patients = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM patients"))['count'];
 $total_doctors = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM doctors"))['count'];
-$upcoming_appointments = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM appointments WHERE appointment_date >= CURDATE()"))['count'];
+$upcoming_appointments = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM appointments WHERE appointment_datetime >= CURDATE()"))['count'];
 ?>
 
 <!DOCTYPE html>
@@ -25,6 +25,7 @@ $upcoming_appointments = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*)
     <title>YouCare Dashboard</title>
     <link href="../../assets/libs/chartist/dist/chartist.min.css" rel="stylesheet">
     <link href="../../dist/css/style.min.css" rel="stylesheet">
+
 </head>
 <body>
     <!-- ============================================================== -->
@@ -161,14 +162,14 @@ $upcoming_appointments = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*)
                                     </thead>
                                     <?php
 $query = "SELECT 
-             a.appointment_date, 
+             a.appointment_datetime, 
              a.status, 
              p.full_name AS patient, 
              d.full_name AS doctor
           FROM appointments a
           JOIN patients p ON a.patient_id = p.patient_id
           JOIN doctors d ON a.doctor_id = d.doctor_id
-          ORDER BY a.appointment_date DESC
+          ORDER BY a.appointment_datetime DESC
           LIMIT 6";
 
 $result = mysqli_query($conn, $query);
@@ -185,7 +186,7 @@ if (mysqli_num_rows($result) > 0) {
         echo "<tr>";
         echo "<td class='txt-oflo'>" . htmlspecialchars($row['patient']) . "</td>";
         echo "<td class='txt-oflo'>" . htmlspecialchars($row['doctor']) . "</td>";
-        echo "<td class='txt-oflo'>" . date('F j, Y', strtotime($row['appointment_date'])) . "</td>";
+        echo "<td class='txt-oflo'>" . date('F j, Y', strtotime($row['appointment_datetime'])) . "</td>";
         echo "<td><span class='label label-rounded $label'>$status</span></td>";
         echo "</tr>";
     }
@@ -280,7 +281,7 @@ if (mysqli_num_rows($result) > 0) {
                 
                 <?php
                 // Appointments this month
-                $appointments = mysqli_query($conn, "SELECT COUNT(*) AS total FROM appointments WHERE MONTH(appointment_date) = MONTH(CURDATE()) AND YEAR(appointment_date) = YEAR(CURDATE())");
+                $appointments = mysqli_query($conn, "SELECT COUNT(*) AS total FROM appointments WHERE MONTH(appointment_datetime) = MONTH(CURDATE()) AND YEAR(appointment_datetime) = YEAR(CURDATE())");
                 $appointments_count = mysqli_fetch_assoc($appointments)['total'];
 
                 // New Patients this month
@@ -299,7 +300,7 @@ if (mysqli_num_rows($result) > 0) {
                 </ul>
 
                 <div class="text-center">
-                    <a href="report.php" class="btn btn-sm btn-outline-info">View Full Report</a>
+                    <a href="appointments.php" class="btn btn-sm btn-outline-info">View Full Report</a>
                 </div>
             </div>
         </div>
@@ -353,6 +354,8 @@ if (mysqli_num_rows($result) > 0) {
     <script src="../../assets/libs/chartist/dist/chartist.min.js"></script>
     <script src="../../assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
     <script src="../../dist/js/pages/dashboards/dashboard1.js"></script>
+    
+    
 </body>
 
 </html>
