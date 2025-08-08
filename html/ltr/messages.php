@@ -67,7 +67,7 @@ include 'config.php'; ?>
                     <div class="d-flex align-items-center justify-content-end">
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                                <li class="breadcrumb-item"><a href="index.php">Home</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">Messages</li>
                             </ol>
                         </nav>
@@ -116,8 +116,7 @@ include 'config.php'; ?>
             <!-- footer -->
             <!-- ============================================================== -->
             <footer class="footer text-center">
-                All Rights Reserved by Nice admin. Designed and Developed by
-                <a href="https://wrappixel.com">WrapPixel</a>.
+                All Rights Reserved by YouCare Admin.
             </footer>
             <!-- ============================================================== -->
             <!-- End footer -->

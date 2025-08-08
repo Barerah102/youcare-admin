@@ -320,8 +320,7 @@ if (mysqli_num_rows($result) > 0) {
             <!-- footer -->
             <!-- ============================================================== -->
             <footer class="footer text-center">
-                All Rights Reserved by Nice admin. Designed and Developed by
-                <a href="https://wrappixel.com">WrapPixel</a>.
+                All Rights Reserved by YouCare Admin.
             </footer>
             <!-- ============================================================== -->
             <!-- End footer -->
