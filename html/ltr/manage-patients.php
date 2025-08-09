@@ -118,7 +118,7 @@ if (isset($_GET['edit'])) {
 value="<?php echo isset($edit_data) ? $edit_data['full_name'] : ''; ?>">
                 </div>
                 <div class="col-md-6 mb-3">
-<input type="text" name="phone" class="form-control" placeholder="Phone" required
+<input type="text" name="phone" class="form-control" placeholder="Phone" pattern="[0-9]{10}" title="Enter 10-digit number" required
 value="<?php echo isset($edit_data) ? $edit_data['phone'] : ''; ?>">
                 </div>
                 <div class="col-md-6 mb-3">
@@ -167,6 +167,7 @@ if (!preg_match("/^[A-Za-z\s]{2,50}$/", $full_name)) {
 if (!preg_match("/^\d{10,15}$/", $phone)) {
     echo "<script>alert('Phone number must be 10 to 15 digits.'); window.history.back();</script>";
     exit;
+    
 }
 
 // Email: valid format
@@ -340,8 +341,7 @@ if ($city_id <= 0 || $user_id <= 0) {
             <!-- footer -->
             <!-- ============================================================== -->
             <footer class="footer text-center">
-                All Rights Reserved by Nice admin. Designed and Developed by
-                <a href="https://wrappixel.com">WrapPixel</a>.
+               All Rights Reserved by YouCare Admin.
             </footer>
             <!-- ============================================================== -->
             <!-- End footer -->

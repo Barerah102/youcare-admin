@@ -218,6 +218,37 @@ if ($city_id <= 0) {
     echo "<script>alert('Invalid city selected.'); window.history.back();</script>";
     exit;
 }
+// Validate profile details (strict rules)
+$profile_details = trim($profile_details);
+$profile_details = preg_replace('/\s+/', ' ', $profile_details);
+
+if ($profile_details === '') {
+    echo "<script>alert('Profile details cannot be empty.'); window.history.back();</script>";
+    exit;
+}
+
+if (preg_match('/^[\p{P}\p{S}]+$/u', $profile_details)) {
+    echo "<script>alert('Profile details cannot be only symbols or punctuation.'); window.history.back();</script>";
+    exit;
+}
+
+if (preg_match('/\b(\w{2,})\b(?:\s+\1){2,}/i', $profile_details)) {
+    echo "<script>alert('Profile details look like repeated gibberish. Please write meaningful content.'); window.history.back();</script>";
+    exit;
+}
+
+if (strlen($profile_details) < 10 || strlen($profile_details) > 500) {
+    echo "<script>alert('Profile details should be between 10 and 500 characters.'); window.history.back();</script>";
+    exit;
+}
+
+// Validate profile details (10–500 characters)
+if (strlen($profile_details) < 10 || strlen($profile_details) > 500) {
+    echo "<script>alert('Profile details should be between 10 and 500 characters.'); window.history.back();</script>";
+    exit;
+}
+
+
 // === ✅ DUPLICATE CHECK (after validations) ===
     $check = mysqli_query($conn, "SELECT * FROM doctors WHERE email='$email' OR phone='$phone'");
     if (mysqli_num_rows($check) > 0) {
@@ -280,6 +311,37 @@ if (isset($_POST['update'])) {
         echo "<script>alert('Invalid city selected.'); window.history.back();</script>";
         exit;
     }
+    // Validate profile details (strict rules)
+$profile_details = trim($profile_details);
+$profile_details = preg_replace('/\s+/', ' ', $profile_details);
+
+if ($profile_details === '') {
+    echo "<script>alert('Profile details cannot be empty.'); window.history.back();</script>";
+    exit;
+}
+
+if (preg_match('/^[\p{P}\p{S}]+$/u', $profile_details)) {
+    echo "<script>alert('Profile details cannot be only symbols or punctuation.'); window.history.back();</script>";
+    exit;
+}
+
+if (preg_match('/\b(\w{2,})\b(?:\s+\1){2,}/i', $profile_details)) {
+    echo "<script>alert('Profile details look like repeated gibberish. Please write meaningful content.'); window.history.back();</script>";
+    exit;
+}
+
+if (strlen($profile_details) < 10 || strlen($profile_details) > 500) {
+    echo "<script>alert('Profile details should be between 10 and 500 characters.'); window.history.back();</script>";
+    exit;
+}
+
+    // Validate profile details (10–500 characters)
+if (strlen($profile_details) < 10 || strlen($profile_details) > 500) {
+    echo "<script>alert('Profile details should be between 10 and 500 characters.'); window.history.back();</script>";
+    exit;
+}
+
+    
 
   $query = "UPDATE doctors SET 
     full_name='$full_name', specialization='$specialization', phone='$phone', email='$email',
@@ -358,8 +420,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             <!-- footer -->
             <!-- ============================================================== -->
             <footer class="footer text-center">
-                All Rights Reserved by Nice admin. Designed and Developed by
-                <a href="https://wrappixel.com">WrapPixel</a>.
+                All Rights Reserved by YouCare Admin.
             </footer>
             <!-- ============================================================== -->
             <!-- End footer -->
