@@ -10,7 +10,7 @@ include 'config.php';
 // Fetch total counts
 $total_patients = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM patients"))['count'];
 $total_doctors = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM doctors"))['count'];
-$upcoming_appointments = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM appointments WHERE appointment_datetime >= CURDATE()"))['count'];
+$total_appointments = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM appointments"))['count'];
 ?>
 
 <!DOCTYPE html>
@@ -90,9 +90,10 @@ $upcoming_appointments = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*)
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title m-b-5">Total Appointments</h5>
-                <h3 class="font-light">
-                    <?php echo $upcoming_appointments; ?>
-                </h3>
+<h3 class="font-light">
+    <?php echo $total_appointments; ?>
+</h3>
+
                 <div class="m-t-20 text-center">
                     <div id="appointmentsSummaryChart"></div>
                 </div>
